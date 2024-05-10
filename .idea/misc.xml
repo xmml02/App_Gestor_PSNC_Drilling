@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="Black">
+    <option name="sdkName" value="Python 3.12 (App_Gestor_PSNC_Drilling)" />
+  </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12 (App_Gestor_PSNC_Drilling)" project-jdk-type="Python SDK" />
 </project>
