@@ -6,8 +6,7 @@ from datetime import datetime
 def main():
 
     listCommits = get_git_commits()
-    commitActual = get_current_commit()
-
+    currentCommit = get_current_commit()
     # NOSE
 
     root = tk.Tk()
@@ -17,11 +16,11 @@ def main():
 
     # etiqueta ultima version
     label = tk.Label(root, text="Ultima version: "+listCommits[0]['denominacion'], font=("Arial", 10), bg="lightblue")
-    label.pack(pady=20)
+    label.pack(pady=2, padx=2, anchor=tk.E)
 
-    # etiqueta commit actual
-    label = tk.Label(root, text="Commit actual: "+commitActual['denominacion'], font=("Arial", 10), bg="lightblue")
-    label.pack(pady=20)
+    # current commit
+    label = tk.Label(root, text="Current commit: "+currentCommit['denominacion'], font=("Arial", 10), bg="lightblue")
+    label.pack(pady=2, padx=2, anchor=tk.E)
 
     #creamos una etiqueta
     label = tk.Label(root, text="VERSION DE PRUEBA", font=("Arial", 20), bg="lightblue")
@@ -46,6 +45,7 @@ def get_current_commit():
     }
     return commit_dict
 
+
 def get_git_commits():
     commit_info = subprocess.check_output(['git', 'log', '--pretty=format:%h - %ad']).decode('utf-8').strip()
     commit_list = commit_info.split('\n')
@@ -65,32 +65,8 @@ def get_git_commits():
 
     # sort the commits by date in descending order
     commit_dicts = sorted(commit_dicts, key=lambda x: x['fecha'], reverse=True)
-
     return commit_dicts
 
-
-def get_git_commits():
-    commit_info = subprocess.check_output(['git', 'log', '--pretty=format:%h - %ad']).decode('utf-8').strip()
-    commit_list = commit_info.split('\n')
-    commit_dicts = []
-    for commit in commit_list:
-        parts = commit.split(' - ')
-        try:
-            version = subprocess.check_output(['git', 'show', '-s', '--pretty=format:%s', parts[0]]).decode(
-                'utf-8').strip()
-        except subprocess.CalledProcessError:
-            version = 's/n'
-        commit_dict = {
-            'rev-parse': parts[0],
-            'denominacion': version,
-            'fecha': datetime.strptime(parts[1], '%a %b %d %H:%M:%S %Y %z')  # convert string to datetime object
-        }
-        commit_dicts.append(commit_dict)
-
-    # sort the commits by date in descending order
-    commit_dicts = sorted(commit_dicts, key=lambda x: x['fecha'], reverse=True)
-
-    return commit_dicts
 
 if __name__ == "__main__":
 
