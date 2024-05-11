@@ -3,10 +3,13 @@ from tkinter import messagebox
 import subprocess
 from datetime import datetime
 
+import pyperclip
+
+
 def main():
 
-    listCommits = get_git_commits()
-    currentCommit = get_current_commit()
+    currentCommit = 'v5 Prueba'
+    listCommits = get_git_commits(currentCommit)
     # NOSE
 
     root = tk.Tk()
@@ -15,11 +18,7 @@ def main():
     root.config(bg="lightblue")
 
     # etiqueta ultima version
-    label = tk.Label(root, text="Ultima version: "+listCommits[0]['denominacion'], font=("Arial", 10), bg="lightblue")
-    label.pack(pady=2, padx=2, anchor=tk.E)
-
-    # current commit
-    label = tk.Label(root, text="Current commit: "+currentCommit['denominacion'], font=("Arial", 10), bg="lightblue")
+    label = tk.Label(root, text="Ultima version: "+currentCommit, font=("Arial", 10), bg="lightblue")
     label.pack(pady=2, padx=2, anchor=tk.E)
 
     #creamos una etiqueta
@@ -32,21 +31,10 @@ def main():
 
     root.mainloop()
 
-def get_current_commit():
-    try:
-        current_commit = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('utf-8').strip()
-        version = subprocess.check_output(['git', 'show', '-s', '--pretty=format:%s', current_commit]).decode('utf-8').strip()
-    except subprocess.CalledProcessError:
-        current_commit = 's/n'
-        version = 's/n'
-    commit_dict = {
-        'rev-parse': current_commit,
-        'denominacion': version
-    }
-    return commit_dict
+def get_git_commits(currentCommit: str):
+    def copy_to_clipboard(text: str):
+        pyperclip.copy(text)
 
-
-def get_git_commits():
     commit_info = subprocess.check_output(['git', 'log', '--pretty=format:%h - %ad']).decode('utf-8').strip()
     commit_list = commit_info.split('\n')
     commit_dicts = []
@@ -65,6 +53,13 @@ def get_git_commits():
 
     # sort the commits by date in descending order
     commit_dicts = sorted(commit_dicts, key=lambda x: x['fecha'], reverse=True)
+
+    lastCommit = commit_dicts[0]['denominacion']
+    if lastCommit != currentCommit:
+        messagebox.showinfo("Mensaje", "Nueva version disponible: "+ lastCommit)
+        copy_to_clipboard(lastCommit)
+        exit()
+
     return commit_dicts
 
 
